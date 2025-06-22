@@ -425,185 +425,178 @@
     </div>
   </div>
 
-  <script>
-    function makeDraggable(el) {
-      let isDragging = false;
-      let offsetX, offsetY;
+ <!-- (everything above this remains the same until the script section) -->
 
-      el.addEventListener('mousedown', (e) => {
-        isDragging = true;
-        offsetX = e.clientX - el.offsetLeft;
-        offsetY = e.clientY - el.offsetTop;
-      });
+<script>
+  function makeDraggable(el) {
+    let isDragging = false;
+    let offsetX, offsetY;
 
-      document.addEventListener('mousemove', (e) => {
-        if (isDragging) {
-          el.style.left = (e.clientX - offsetX) + 'px';
-          el.style.top = (e.clientY - offsetY) + 'px';
+    el.addEventListener('mousedown', (e) => {
+      isDragging = true;
+      offsetX = e.clientX - el.offsetLeft;
+      offsetY = e.clientY - el.offsetTop;
+    });
+
+    document.addEventListener('mousemove', (e) => {
+      if (isDragging) {
+        el.style.left = (e.clientX - offsetX) + 'px';
+        el.style.top = (e.clientY - offsetY) + 'px';
+      }
+    });
+
+    document.addEventListener('mouseup', () => {
+      isDragging = false;
+    });
+  }
+
+  const proveBtn = document.getElementById("proveBtn");
+  const startMenu = document.getElementById("startMenu");
+
+  proveBtn.addEventListener("click", () => {
+    startMenu.style.display = startMenu.style.display === "block" ? "none" : "block";
+  });
+
+  document.addEventListener("click", (e) => {
+    if (!proveBtn.contains(e.target) && !startMenu.contains(e.target)) {
+      startMenu.style.display = "none";
+    }
+  });
+
+  function enterDesktop() {
+    const name = document.getElementById("username").value.trim();
+    const avatar = document.getElementById("avatar").value.trim();
+    if (!name || !avatar) return alert("Please enter both name and avatar URL.");
+    localStorage.setItem('xpDesktopName', name);
+    localStorage.setItem('xpDesktopAvatar', avatar);
+    loadDesktop(name, avatar);
+  }
+
+  function loadDesktop(name, avatar) {
+    document.getElementById("loginForm").style.display = "none";
+    document.querySelector(".desktop").style.display = "block";
+    document.getElementById("userName").textContent = name;
+    const avatarImg = document.getElementById("userAvatar");
+    avatarImg.src = avatar;
+    avatarImg.style.display = "inline-block";
+  }
+
+  function logout() {
+    localStorage.removeItem('xpDesktopName');
+    localStorage.removeItem('xpDesktopAvatar');
+    document.querySelector(".desktop").style.display = "none";
+    document.getElementById("loginForm").style.display = "block";
+    document.getElementById("username").value = "";
+    document.getElementById("avatar").value = "";
+  }
+
+  const gamesIcon = document.getElementById('gamesIcon');
+  const gamesIconImg = document.getElementById('gamesIconImg');
+  const gamesWindow = document.getElementById('gamesWindow');
+
+  function openGamesWindow() {
+    gamesWindow.style.display = 'block';
+    gamesIconImg.src = "./images/Folder Opened.png";
+  }
+
+  function closeGamesWindow() {
+    gamesWindow.style.display = 'none';
+    gamesIconImg.src = "./images/Folder Closed.png";
+  }
+
+  const pictureFolderIcon = document.getElementById('pictureFolderIcon');
+  const pictureWindow = document.getElementById('pictureWindow');
+
+  function openPictureWindow() {
+    pictureWindow.style.display = 'block';
+  }
+
+  function closePictureWindow() {
+    pictureWindow.style.display = 'none';
+  }
+
+  const roleJourneyIcon = document.getElementById('roleJourneyIcon');
+  const roleJourneyWindow = document.getElementById('roleJourneyWindow');
+
+  function openRoleJourney() {
+    roleJourneyWindow.style.display = 'block';
+  }
+
+  function updateClock() {
+    const clock = document.getElementById('xpClock');
+    if (!clock) return;
+    const now = new Date();
+    let hours = now.getHours();
+    const minutes = now.getMinutes();
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12 || 12;
+    const minutesStr = minutes < 10 ? '0' + minutes : minutes;
+    clock.textContent = `${hours}:${minutesStr} ${ampm}`;
+  }
+
+  updateClock();
+  setInterval(updateClock, 1000);
+
+  async function fetchJourney() {
+    const input = document.getElementById("journeyInput").value.trim();
+    const resultDiv = document.getElementById("journeyResult");
+    if (!input) return alert("Enter a Discord username");
+    resultDiv.innerHTML = "Loading...";
+    try {
+      const res = await fetch(`https://152.53.243.39.sslip.io/api/discord/${input}`, {
+        headers: {
+          "x-api-key": "JhWFrhpoqGJOxwhxYccvxZzABIvDBKya"
         }
       });
-
-      document.addEventListener('mouseup', () => {
-        isDragging = false;
-      });
+      if (!res.ok) throw new Error("User not found");
+      const data = await res.json();
+      const roles = data.roles || [];
+      if (roles.length === 0) {
+        resultDiv.innerHTML = "No roles found.";
+        return;
+      }
+      const roleList = roles.map(roleName => `<div style="margin-bottom: 6px; font-weight: bold; font-size: 14px;">${roleName}</div>`).join("");
+      resultDiv.innerHTML = `<div style="max-height: 200px; overflow-y: auto; text-align: left;">${roleList}</div>`;
+    } catch (e) {
+      resultDiv.innerHTML = `<span style="color:red;">Error: ${e.message}</span>`;
     }
+  }
 
-    makeDraggable(document.getElementById('icon1'));
+  window.addEventListener('DOMContentLoaded', () => {
+    const storedName = localStorage.getItem('xpDesktopName');
+    const storedAvatar = localStorage.getItem('xpDesktopAvatar');
+    if (storedName && storedAvatar) {
+      loadDesktop(storedName, storedAvatar);
+    }
+  });
 
-    const proveBtn = document.getElementById("proveBtn");
-    const startMenu = document.getElementById("startMenu");
-
-    proveBtn.addEventListener("click", () => {
-      startMenu.style.display = startMenu.style.display === "block" ? "none" : "block";
-    });
-
-    document.addEventListener("click", (e) => {
-      if (!proveBtn.contains(e.target) && !startMenu.contains(e.target)) {
-        startMenu.style.display = "none";
+  // 🧠 Touch + double click support helper
+  function supportTouchAndDoubleClick(el, callback) {
+    el.addEventListener('dblclick', callback);
+    let tapped = false;
+    el.addEventListener('touchstart', (e) => {
+      if (tapped) {
+        callback();
+        tapped = false;
+      } else {
+        tapped = true;
+        setTimeout(() => { tapped = false }, 300);
       }
     });
-
-   function enterDesktop() {
-  const name = document.getElementById("username").value.trim();
-  const avatar = document.getElementById("avatar").value.trim();
-  if (!name || !avatar) return alert("Please enter both name and avatar URL.");
-
-  // Save to localStorage
-  localStorage.setItem('xpDesktopName', name);
-  localStorage.setItem('xpDesktopAvatar', avatar);
-
-  loadDesktop(name, avatar);
-}
-
-function loadDesktop(name, avatar) {
-  document.getElementById("loginForm").style.display = "none";
-  document.querySelector(".desktop").style.display = "block";
-
-  document.getElementById("userName").textContent = name;
-  const avatarImg = document.getElementById("userAvatar");
-  avatarImg.src = avatar;
-  avatarImg.style.display = "inline-block";
-}
-
-
-function logout() {
-  localStorage.removeItem('xpDesktopName');
-  localStorage.removeItem('xpDesktopAvatar');
-
-  document.querySelector(".desktop").style.display = "none";
-  document.getElementById("loginForm").style.display = "block";
-
-  // Clear inputs
-  document.getElementById("username").value = "";
-  document.getElementById("avatar").value = "";
-}
-
-    makeDraggable(document.getElementById('gamesIcon'));
-
-    const gamesIcon = document.getElementById('gamesIcon');
-    const gamesIconImg = document.getElementById('gamesIconImg');
-    const gamesWindow = document.getElementById('gamesWindow');
-
-    gamesIcon.addEventListener('dblclick', () => {
-    gamesWindow.style.display = 'block';
-     gamesIconImg.src = "./images/Folder Opened.png";
-});
-
-    function closeGamesWindow() {
-    gamesWindow.style.display = 'none';
-     gamesIconImg.src = "./images/Folder Closed.png"; 
-}
-
-makeDraggable(document.getElementById('pictureFolderIcon'));
-makeDraggable(document.getElementById('pictureWindow'));
-
-const pictureFolderIcon = document.getElementById('pictureFolderIcon');
-const pictureWindow = document.getElementById('pictureWindow');
-
-pictureFolderIcon.addEventListener('dblclick', () => {
-  pictureWindow.style.display = 'block';
-});
-
-function closePictureWindow() {
-  pictureWindow.style.display = 'none';
-}
-
-
-
-function updateClock() {
-  const clock = document.getElementById('xpClock');
-  if (!clock) return;
-  const now = new Date();
-
-  // Format time as HH:MM AM/PM
-  let hours = now.getHours();
-  const minutes = now.getMinutes();
-  const ampm = hours >= 12 ? 'PM' : 'AM';
-  hours = hours % 12;
-  hours = hours ? hours : 12; // 0 => 12
-  const minutesStr = minutes < 10 ? '0' + minutes : minutes;
-
-  clock.textContent = `${hours}:${minutesStr} ${ampm}`;
-}
-
-// Start the clock immediately and update every second
-updateClock();
-setInterval(updateClock, 1000);
-
-
-
-makeDraggable(document.getElementById('roleJourneyIcon'));
-makeDraggable(document.getElementById('roleJourneyWindow'));
-
-document.getElementById('roleJourneyIcon').addEventListener('dblclick', () => {
-  document.getElementById('roleJourneyWindow').style.display = 'block';
-});
-
-async function fetchJourney() {
-  const input = document.getElementById("journeyInput").value.trim();
-  const resultDiv = document.getElementById("journeyResult");
-  if (!input) return alert("Enter a Discord username");
-
-  resultDiv.innerHTML = "Loading...";
-
-  try {
-    const res = await fetch(`https://152.53.243.39.sslip.io/api/discord/${input}`, {
-      headers: {
-        "x-api-key": "JhWFrhpoqGJOxwhxYccvxZzABIvDBKya"
-      }
-    });
-    if (!res.ok) throw new Error("User not found");
-    const data = await res.json();
-
-    // roles is an array of strings
-    const roles = data.roles || [];
-
-    if (roles.length === 0) {
-      resultDiv.innerHTML = "No roles found.";
-      return;
-    }
-
-    // Build list of roles
-    const roleList = roles.map(roleName => `
-      <div style="margin-bottom: 6px; font-weight: bold; font-size: 14px;">
-        ${roleName}
-      </div>
-    `).join("");
-
-    resultDiv.innerHTML = `<div style="max-height: 200px; overflow-y: auto; text-align: left;">${roleList}</div>`;
-  } catch (e) {
-    resultDiv.innerHTML = `<span style="color:red;">Error: ${e.message}</span>`;
   }
-}
-window.addEventListener('DOMContentLoaded', () => {
-  const storedName = localStorage.getItem('xpDesktopName');
-  const storedAvatar = localStorage.getItem('xpDesktopAvatar');
 
-  if (storedName && storedAvatar) {
-    loadDesktop(storedName, storedAvatar);
-  }
-});
+  // 🧠 Apply touch+doubleclick to icons
+  supportTouchAndDoubleClick(gamesIcon, openGamesWindow);
+  supportTouchAndDoubleClick(pictureFolderIcon, openPictureWindow);
+  supportTouchAndDoubleClick(roleJourneyIcon, openRoleJourney);
 
-  </script>
+  // 🧠 Make draggable
+  makeDraggable(gamesIcon);
+  makeDraggable(document.getElementById('icon1'));
+  makeDraggable(pictureFolderIcon);
+  makeDraggable(document.getElementById('pictureWindow'));
+  makeDraggable(roleJourneyIcon);
+  makeDraggable(roleJourneyWindow);
+</script>
 </body>
 </html>
