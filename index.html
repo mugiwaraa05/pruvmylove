@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>XP Desktop</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: url('./images/background.jpeg') no-repeat center center fixed;
+      background-size: cover;
+      font-family: Tahoma, sans-serif;
+      overflow: hidden;
+    }
+
+    .desktop {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      display: none;
+    }
+
+    .icon {
+      position: absolute;
+      width: 80px;
+      text-align: center;
+      color: white;
+      font-size: 12px;
+      cursor: move;
+    }
+
+    .icon img {
+      width: 48px;
+      height: 48px;
+      display: block;
+      margin: 0 auto 5px;
+    }
+
+    .taskbar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 50px;
+      background: linear-gradient(to top, #003399, #3366cc);
+      border-top: 2px solid #ffffff;
+      display: flex;
+      align-items: center;
+      padding: 0 10px;
+      box-shadow: inset 0 2px 0 #00000055;
+    }
+
+    .start-button {
+      background: url('./images/start.webp') no-repeat;
+      background-size: contain;
+      width: 65px;
+      height: 40px;
+      margin-right: 10px;
+      border: none;
+      cursor: pointer;
+    }
+
+    .start-button:hover {
+      filter: brightness(1.2);
+    }
+
+    .taskbar-app {
+      background-color: #d4d0c8;
+      border: 1px solid #ffffff;
+      margin-left: 5px;
+      padding: 5px 10px;
+      font-size: 13px;
+      color: black;
+      box-shadow: inset -1px -1px #808080, inset 1px 1px #ffffff;
+    }
+
+    .start-menu {
+      position: absolute;
+      bottom: 40px;
+      left: 0;
+      width: 250px;
+      background-color: #d4d0c8;
+      border: 2px solid #000;
+      display: none;
+      z-index: 100;
+    }
+
+    .start-menu h3 {
+      background: linear-gradient(to right, #003399, #3366cc);
+      color: white;
+      margin: 0;
+      padding: 8px;
+      font-size: 14px;
+    }
+
+    .start-menu ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .start-menu li {
+      padding: 10px;
+      border-top: 1px solid #999;
+      cursor: pointer;
+    }
+
+    .start-menu li:hover {
+      background-color: #0a246a;
+      color: white;
+    }
+
+    .login-form {
+      position: absolute;
+      top: 30%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #ece9d8;
+      border: 2px solid #000;
+      padding: 20px;
+      width: 300px;
+      text-align: center;
+      box-shadow: 4px 4px 0px #000;
+      z-index: 200;
+    }
+
+    .login-form input {
+      width: 90%;
+      padding: 8px;
+      margin: 8px 0;
+      border: 1px solid #000;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .login-form button {
+      background-color: #003399;
+      color: white;
+      border: none;
+      padding: 10px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .login-form button:hover {
+      background-color: #3366cc;
+    }
+.taskbar-icons {
+  display: flex;
+  justify-content: center;
+  flex: 1;
+  gap: 20px;
+  align-items: center;
+}
+
+.icon-box {
+  width: 48px;
+  height: 48px;
+  background: rgba(100, 140, 230, 0.4); /* lighter XP blue with transparency */
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: inset -1px -1px rgba(255, 255, 255, 0.3),
+              inset 1px 1px rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  border-radius: 6px;
+  cursor: pointer;
+  backdrop-filter: blur(1px);
+}
+.icon-box:hover {
+  background: rgba(100, 140, 255, 0.5);
+  box-shadow: 0 0 4px rgba(255, 255, 255, 0.3);
+}
+
+
+.icon-box img {
+  width: 32px;
+  height: 32px;
+  transition: transform 0.2s ease;
+}
+
+.icon-box:hover img {
+  transform: scale(1.15);
+}
+
+.tooltip {
+  position: absolute;
+  top: -26px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #ffffcc;
+  color: #000;
+  font-size: 11px;
+  padding: 2px 6px;
+  border: 1px solid #999;
+  border-radius: 2px;
+  white-space: nowrap;
+  box-shadow: 1px 1px 1px #555;
+  display: none;
+  pointer-events: none;
+  z-index: 999;
+}
+
+
+.icon-box:hover .tooltip {
+  display: block;
+}
+
+/* XP-style window */
+.xp-window {
+  width: 300px;
+  background: #ece9d8;
+  border: 2px solid #000;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: none;
+  z-index: 999;
+  box-shadow: 4px 4px 0px #000;
+  border-radius: 4px;
+}
+
+.xp-window-header {
+  background: linear-gradient(to right, #003399, #3366cc);
+  color: white;
+  padding: 6px 10px;
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+  border-bottom: 1px solid #000;
+}
+
+.xp-window-header button {
+  background: none;
+  border: none;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.xp-window-content {
+  padding: 15px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+}
+
+.game-entry {
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border-radius: 6px;
+  padding: 5px;
+}
+
+
+
+.game-entry:hover {
+  animation: bounce 0.4s ease forwards;
+  box-shadow: 0 0 8px rgba(51, 102, 204, 0.7);
+  background-color: rgba(100, 140, 255, 0.15);
+}
+
+
+.game-entry img {
+  width: 48px;
+  height: 48px;
+  transition: transform 0.3s ease;
+}
+
+.game-entry:hover img {
+  transform: rotate(-5deg) scale(1.15);
+  filter: drop-shadow(0 0 4px rgba(51, 102, 204, 0.7));
+}
+
+
+#gamesIcon {
+  z-index: 2;
+}
+
+#gamesWindow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 400px;
+  background: #ece9d8;
+  border: 2px solid black;
+  box-shadow: 4px 4px 0px #000;
+  padding: 10px;
+  display: none;
+  z-index: 3; 
+}
+
+#xpClock {
+  margin-left: auto;  
+  padding: 0 10px;
+  font-family: Tahoma, sans-serif;
+  font-size: 13px;
+  color: white;
+  text-shadow:
+    1px 1px 0 #000000aa,
+   -1px -1px 0 #000000aa,
+    1px -1px 0 #000000aa,
+   -1px 1px 0 #000000aa;
+  user-select: none;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  border-left: 1px solid #555;
+  cursor: default;
+}
+
+  </style>
+</head>
+<body>
+  <div id="loginForm" class="login-form">
+    <h3>Create Your Profile</h3>
+    <input type="text" id="username" placeholder="Enter your name">
+    <input type="text" id="avatar" placeholder="Paste your avatar URL">
+    <button onclick="enterDesktop()">Enter</button>
+  </div>
+
+  <div class="desktop">
+    <div class="icon" id="icon1" style="top: 40px; left: 20px;">
+      <img src="./images/questboard.png" alt="Quests">
+      <div>Quests soon...</div>
+    </div>
+    <div class="icon" id="pictureFolderIcon" style="top: 200px; left: 120px;">
+  <img src="./images/Folder Closed.png" alt="Picture Folder">
+  <div>Stage 2.5 Access</div>
+</div>
+
+    <div class="icon" id="roleJourneyIcon" style="top: 280px; left: 20px;">
+  <img src="./images/Search.png" alt="Role Journey">
+  <div>Role Journey</div>
+</div>
+
+
+   <div class="icon" id="gamesIcon" style="top: 120px; left: 20px;">
+  <img id="gamesIconImg" src="./images/Folder Closed.png" alt="Games Folder">
+  <div>Games</div>
+</div>
+
+<div id="gamesWindow" class="xp-window">
+  <div class="xp-window-header">
+    <span>Games</span>
+    <button onclick="closeGamesWindow()">✕</button>
+  </div>
+  <div class="xp-window-content">
+    <div class="game-entry" onclick="window.open('https://melodic-beignet-3bbe93.netlify.app/finding_addy.html')">
+      <img src="./images/game_1.png" alt="Game 1">
+      <span>Finding Addy</span>
+    </div>
+    <div class="game-entry" onclick="window.open('https://sparkling-truffle-a6dad8.netlify.app/')">
+      <img src="./images/game_2.png" alt="Game 2">
+      <span>Succinct Crush</span>
+    </div>
+    <div class="game-entry" onclick="window.open('https://cool-trifle-f94c30.netlify.app/succinct_shooterr.html')">
+      <img src="./images/game_3.jpg" alt="Game 3">
+      <span>Succinct 3D Shooter</span>
+    </div>
+    <div class="game-entry" onclick="window.open('https://succinct-dinoo.vercel.app/')">
+      <img src="./images/game_4.png" alt="Game 4">
+      <span>Endless Runner</span>
+    </div>
+</div>    
+</div>
+<div id="roleJourneyWindow" class="xp-window">
+  <div class="xp-window-header">
+    <span>Role Journey</span>
+    <button onclick="document.getElementById('roleJourneyWindow').style.display='none'">✕</button>
+  </div>
+  <div style="padding: 10px; text-align: center;">
+    <input id="journeyInput" type="text" placeholder="Enter Discord username" style="width: 90%; padding: 5px; margin-bottom: 10px;">
+    <button onclick="fetchJourney()">View Journey</button>
+    <div id="journeyResult" style="margin-top: 15px;"></div>
+  </div>
+  </div>
+
+  <div id="pictureWindow" class="xp-window">
+  <div class="xp-window-header">
+    <span>[REDACTED]</span>
+    <button onclick="closePictureWindow()">✕</button>
+  </div>
+  <div style="padding: 10px; text-align: center;">
+    <img src="./images/laugh.jpeg" alt="Picture" style="max-width: 100%; max-height: 300px; border: 1px solid #000;">
+  </div>
+</div>
+
+    <div class="taskbar">
+      <button class="start-button" id="proveBtn" title="Prove"></button>
+      <div class="taskbar-icons">
+  <div class="icon-box" onclick="window.open('https://t.me/succinct_stats_bot')">
+    <img src="./images/succinct_stats.png" alt="Succinct Stats">
+    <div class="tooltip">Succinct Stats</div>
+  </div>
+  <div class="icon-box" onclick="window.open('https://succinct-quotes.vercel.app/')">
+    <img src="./images/succinct_qoutes.webp" alt="Succinct Quotes">
+    <div class="tooltip">Succinct Quotes</div>
+  </div>
+  <div class="icon-box" onclick="window.open('https://bid-helper.vercel.app/')">
+    <img src="./images/bid_helper.png" alt="Bid Helper">
+    <div class="tooltip">Bid Helper</div>
+  </div>
+  <div class="icon-box" onclick="window.open('https://succinct-quiz.vercel.app/')">
+    <img src="./images/Checklist.png" alt="Succinct Quiz">
+    <div class="tooltip">Succinct Quiz</div>
+  </div>
+</div>
+ <div id="xpClock" title="Time"></div>
+    <div class="start-menu" id="startMenu">
+      <h3 id="userDisplay">
+        <img id="userAvatar" src="" style="width:24px; height:24px; vertical-align:middle; border-radius:4px; margin-right:6px; display:none;">
+        <span id="userName">Administrator</span>
+      </h3>
+      <ul>
+        <li onclick="location.reload()">Restart</li>
+        <li onclick="window.close()">Turn Off Computer</li>
+        <li onclick="logout()">Logout</li> 
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    function makeDraggable(el) {
+      let isDragging = false;
+      let offsetX, offsetY;
+
+      el.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        offsetX = e.clientX - el.offsetLeft;
+        offsetY = e.clientY - el.offsetTop;
+      });
+
+      document.addEventListener('mousemove', (e) => {
+        if (isDragging) {
+          el.style.left = (e.clientX - offsetX) + 'px';
+          el.style.top = (e.clientY - offsetY) + 'px';
+        }
+      });
+
+      document.addEventListener('mouseup', () => {
+        isDragging = false;
+      });
+    }
+
+    makeDraggable(document.getElementById('icon1'));
+
+    const proveBtn = document.getElementById("proveBtn");
+    const startMenu = document.getElementById("startMenu");
+
+    proveBtn.addEventListener("click", () => {
+      startMenu.style.display = startMenu.style.display === "block" ? "none" : "block";
+    });
+
+    document.addEventListener("click", (e) => {
+      if (!proveBtn.contains(e.target) && !startMenu.contains(e.target)) {
+        startMenu.style.display = "none";
+      }
+    });
+
+   function enterDesktop() {
+  const name = document.getElementById("username").value.trim();
+  const avatar = document.getElementById("avatar").value.trim();
+  if (!name || !avatar) return alert("Please enter both name and avatar URL.");
+
+  // Save to localStorage
+  localStorage.setItem('xpDesktopName', name);
+  localStorage.setItem('xpDesktopAvatar', avatar);
+
+  loadDesktop(name, avatar);
+}
+
+function loadDesktop(name, avatar) {
+  document.getElementById("loginForm").style.display = "none";
+  document.querySelector(".desktop").style.display = "block";
+
+  document.getElementById("userName").textContent = name;
+  const avatarImg = document.getElementById("userAvatar");
+  avatarImg.src = avatar;
+  avatarImg.style.display = "inline-block";
+}
+
+
+function logout() {
+  localStorage.removeItem('xpDesktopName');
+  localStorage.removeItem('xpDesktopAvatar');
+
+  document.querySelector(".desktop").style.display = "none";
+  document.getElementById("loginForm").style.display = "block";
+
+  // Clear inputs
+  document.getElementById("username").value = "";
+  document.getElementById("avatar").value = "";
+}
+
+    makeDraggable(document.getElementById('gamesIcon'));
+
+    const gamesIcon = document.getElementById('gamesIcon');
+    const gamesIconImg = document.getElementById('gamesIconImg');
+    const gamesWindow = document.getElementById('gamesWindow');
+
+    gamesIcon.addEventListener('dblclick', () => {
+    gamesWindow.style.display = 'block';
+     gamesIconImg.src = "./images/Folder Opened.png";
+});
+
+    function closeGamesWindow() {
+    gamesWindow.style.display = 'none';
+     gamesIconImg.src = "./images/Folder Closed.png"; 
+}
+
+makeDraggable(document.getElementById('pictureFolderIcon'));
+makeDraggable(document.getElementById('pictureWindow'));
+
+const pictureFolderIcon = document.getElementById('pictureFolderIcon');
+const pictureWindow = document.getElementById('pictureWindow');
+
+pictureFolderIcon.addEventListener('dblclick', () => {
+  pictureWindow.style.display = 'block';
+});
+
+function closePictureWindow() {
+  pictureWindow.style.display = 'none';
+}
+
+
+
+function updateClock() {
+  const clock = document.getElementById('xpClock');
+  if (!clock) return;
+  const now = new Date();
+
+  // Format time as HH:MM AM/PM
+  let hours = now.getHours();
+  const minutes = now.getMinutes();
+  const ampm = hours >= 12 ? 'PM' : 'AM';
+  hours = hours % 12;
+  hours = hours ? hours : 12; // 0 => 12
+  const minutesStr = minutes < 10 ? '0' + minutes : minutes;
+
+  clock.textContent = `${hours}:${minutesStr} ${ampm}`;
+}
+
+// Start the clock immediately and update every second
+updateClock();
+setInterval(updateClock, 1000);
+
+
+
+makeDraggable(document.getElementById('roleJourneyIcon'));
+makeDraggable(document.getElementById('roleJourneyWindow'));
+
+document.getElementById('roleJourneyIcon').addEventListener('dblclick', () => {
+  document.getElementById('roleJourneyWindow').style.display = 'block';
+});
+
+async function fetchJourney() {
+  const input = document.getElementById("journeyInput").value.trim();
+  const resultDiv = document.getElementById("journeyResult");
+  if (!input) return alert("Enter a Discord username");
+
+  resultDiv.innerHTML = "Loading...";
+
+  try {
+    const res = await fetch(`https://152.53.243.39.sslip.io/api/discord/${input}`, {
+      headers: {
+        "x-api-key": "JhWFrhpoqGJOxwhxYccvxZzABIvDBKya"
+      }
+    });
+    if (!res.ok) throw new Error("User not found");
+    const data = await res.json();
+
+    // roles is an array of strings
+    const roles = data.roles || [];
+
+    if (roles.length === 0) {
+      resultDiv.innerHTML = "No roles found.";
+      return;
+    }
+
+    // Build list of roles
+    const roleList = roles.map(roleName => `
+      <div style="margin-bottom: 6px; font-weight: bold; font-size: 14px;">
+        ${roleName}
+      </div>
+    `).join("");
+
+    resultDiv.innerHTML = `<div style="max-height: 200px; overflow-y: auto; text-align: left;">${roleList}</div>`;
+  } catch (e) {
+    resultDiv.innerHTML = `<span style="color:red;">Error: ${e.message}</span>`;
+  }
+}
+window.addEventListener('DOMContentLoaded', () => {
+  const storedName = localStorage.getItem('xpDesktopName');
+  const storedAvatar = localStorage.getItem('xpDesktopAvatar');
+
+  if (storedName && storedAvatar) {
+    loadDesktop(storedName, storedAvatar);
+  }
+});
+
+  </script>
+</body>
+</html>
