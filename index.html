@@ -341,7 +341,11 @@
   <img src="./images/Search.png" alt="Role Journey">
   <div>Role Journey</div>
 </div>
-
+    
+<div class="icon" id="newSiteIcon" style="top: 400px; left: 20px;">
+  <img src="./images/ticket.png" alt="Website">
+  <div>Summer Tickets</div>
+</div>
 
    <div class="icon" id="gamesIcon" style="top: 120px; left: 20px;">
   <img id="gamesIconImg" src="./images/Folder Closed.png" alt="Games Folder">
@@ -536,6 +540,11 @@
     const minutesStr = minutes < 10 ? '0' + minutes : minutes;
     clock.textContent = `${hours}:${minutesStr} ${ampm}`;
   }
+  const newSiteIcon = document.getElementById('newSiteIcon');
+makeDraggable(newSiteIcon);
+supportTouchAndDoubleClick(newSiteIcon, () => {
+  window.open('https://succinct-summer-f8uy.vercel.app/');
+});
 
   updateClock();
   setInterval(updateClock, 1000);
