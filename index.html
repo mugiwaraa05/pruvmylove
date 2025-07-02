@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
   <meta charset="UTF-8">
-  <title>Succinct Desktop</title>
+  <title>XP Desktop</title>
   <style>
     body {
       margin: 0;
@@ -314,7 +315,7 @@
   border-left: 1px solid #555;
   cursor: default;
 }
-   
+
 
 
   </style>
@@ -341,11 +342,20 @@
   <img src="./images/Search.png" alt="Role Journey">
   <div>Role Journey</div>
 </div>
-    
 <div class="icon" id="newSiteIcon" style="top: 400px; left: 20px;">
   <img src="./images/ticket.png" alt="Website">
   <div>Summer Tickets</div>
 </div>
+<div class="icon" id="oneSuccinctIcon" style="top: 460px; left: 200px;">
+  <img src="./images/mosaic.webp" alt="One Succinct">
+  <div>One Succinct</div>
+</div>
+
+<div class="icon" id="fortuneIcon" style="top: 350px; left: 250px;">
+  <img src="./images/magic_ball.png" alt="Fortune Teller">
+  <div>Fortune Teller</div>
+</div>
+
 
    <div class="icon" id="gamesIcon" style="top: 120px; left: 20px;">
   <img id="gamesIconImg" src="./images/Folder Closed.png" alt="Games Folder">
@@ -397,6 +407,27 @@
     <img src="./images/laugh.jpeg" alt="Picture" style="max-width: 100%; max-height: 300px; border: 1px solid #000;">
   </div>
 </div>
+<div id="fortuneWindow" class="xp-window">
+  <div class="xp-window-header">
+    <span>Succinct Fortune Teller</span>
+    <button onclick="closeFortuneWindow()">✕</button>
+  </div>
+  <div style="padding: 10px; text-align: center;">
+    <img id="fortunePfp" src="" alt="PFP" style="width: 50px; height: 50px; border-radius: 50%; margin-bottom: 10px;">
+    <div id="fortuneResult" style="margin-bottom: 10px;">Your fortune awaits...</div>
+    <button id="revealFortuneBtn" onclick="tellFortune()">Reveal Fortune</button>
+  </div>
+</div>
+<div id="mosaicWindow" class="xp-window">
+  <div class="xp-window-header">
+    <span>One Succinct</span>
+    <button onclick="closeMosaicWindow()">✕</button>
+  </div>
+  <div style="padding: 10px; text-align: center;">
+    <iframe src="./mosaic/mosaic.html" style="width: 100%; height: 300px; border: 1px solid #000;"></iframe>
+  </div>
+</div>
+
 
     <div class="taskbar">
       <button class="start-button" id="proveBtn" title="Prove"></button>
@@ -417,6 +448,7 @@
     <img src="./images/Checklist.png" alt="Succinct Quiz">
     <div class="tooltip">Succinct Quiz</div>
   </div>
+  
 </div>
  <div id="xpClock" title="Time"></div>
     <div class="start-menu" id="startMenu">
@@ -540,11 +572,134 @@
     const minutesStr = minutes < 10 ? '0' + minutes : minutes;
     clock.textContent = `${hours}:${minutesStr} ${ampm}`;
   }
-  const newSiteIcon = document.getElementById('newSiteIcon');
+const newSiteIcon = document.getElementById('newSiteIcon');
 makeDraggable(newSiteIcon);
 supportTouchAndDoubleClick(newSiteIcon, () => {
   window.open('https://succinct-summer-f8uy.vercel.app/');
 });
+const fortuneWindow = document.getElementById('fortuneWindow');
+const fortuneResult = document.getElementById('fortuneResult');
+const revealFortuneBtn = document.getElementById('revealFortuneBtn');
+const fortunePfp = document.getElementById('fortunePfp');
+
+const fortunes = [
+  "you'll prove greatness on-chain.",
+  "expect a promotion soon.",
+  "a prover node awaits you.",
+  "your bids shall be victorious.",
+  "your bids shall be victori... you'll keep rugging",
+   "You will become a ZK OG before the year ends.",
+  "Airdrops are in your future... but only if you stay active.",
+  "Your prover node will prove brighter than others.",
+  "Be wary of scammers disguised as helpers.",
+  "You will crack the next Addy quest with ease.",
+  "A core contributor may notice your work soon.",
+  "Your reputation will grow in the community.",
+  "You will jeet 70% of your airdrop on day 1.",
+  "Soon, you'll understand the true power of ZK.",
+  "Stage 2 will keep dealing with you.",
+  "The Succinct Network has plans for you..."
+];
+
+function openFortuneWindow() {
+  fortuneWindow.style.display = 'block';
+  const avatar = localStorage.getItem('xpDesktopAvatar');
+  fortunePfp.src = avatar || '';
+
+  const hasRevealed = localStorage.getItem('fortuneRevealed');
+  const savedFortune = localStorage.getItem('fortuneMessage');
+
+  if (hasRevealed && savedFortune) {
+    fortuneResult.style.fontWeight = 'bold';
+    fortuneResult.innerHTML = `${savedFortune}<br><em style='color:green;'>Fortune revealed. Keep proving.</em>`;
+    revealFortuneBtn.style.display = 'none';
+  } else {
+    fortuneResult.style.fontWeight = 'normal';
+    fortuneResult.textContent = "Your fortune awaits...";
+    revealFortuneBtn.style.display = 'inline-block';
+  }
+}
+
+
+function tellFortune() {
+  if (localStorage.getItem('fortuneRevealed')) return;
+
+  const name = localStorage.getItem('xpDesktopName') || "User";
+  const randomFortune = fortunes[Math.floor(Math.random() * fortunes.length)];
+  const fullMessage = `${name}, ${randomFortune}`;
+
+  revealFortuneBtn.style.display = 'none';
+
+  // Clear and set bold style
+  fortuneResult.innerHTML = '';
+  fortuneResult.style.fontWeight = 'bold';
+
+  typeText(fortuneResult, fullMessage, 50, () => {
+    const msg = document.createElement('div');
+    msg.innerHTML = "<br><em style='color:green;'>Fortune revealed. Keep proving.</em>";
+    fortuneResult.appendChild(msg);
+  });
+
+  localStorage.setItem('fortuneRevealed', 'true');
+  localStorage.setItem('fortuneMessage', fullMessage);
+}
+
+
+
+
+function closeFortuneWindow() {
+  fortuneWindow.style.display = 'none';
+}
+function typeText(element, text, speed = 50, callback) {
+  element.innerHTML = "";
+  let i = 0;
+  const interval = setInterval(() => {
+    element.innerHTML += text.charAt(i);
+    i++;
+    if (i >= text.length) {
+      clearInterval(interval);
+      if (callback) callback();
+    }
+  }, speed);
+}
+
+function supportTouchAndDoubleClick(el, callback) {
+  el.addEventListener('dblclick', callback);
+  let tapped = false;
+  el.addEventListener('touchstart', (e) => {
+    if (tapped) {
+      callback();
+      tapped = false;
+    } else {
+      tapped = true;
+      setTimeout(() => { tapped = false }, 300);
+    }
+  });
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  const storedName = localStorage.getItem('xpDesktopName');
+  const storedAvatar = localStorage.getItem('xpDesktopAvatar');
+  if (storedName && storedAvatar) {
+    document.getElementById("loginForm").style.display = "none";
+    document.querySelector(".desktop").style.display = "block";
+  }
+});
+const oneSuccinctIcon = document.getElementById('oneSuccinctIcon');
+const mosaicWindow = document.getElementById('mosaicWindow');
+
+makeDraggable(oneSuccinctIcon);
+makeDraggable(mosaicWindow);
+
+supportTouchAndDoubleClick(oneSuccinctIcon, () => {
+  mosaicWindow.style.display = 'block';
+});
+
+function closeMosaicWindow() {
+  mosaicWindow.style.display = 'none';
+}
+
+
 
   updateClock();
   setInterval(updateClock, 1000);
@@ -601,7 +756,7 @@ supportTouchAndDoubleClick(newSiteIcon, () => {
   supportTouchAndDoubleClick(gamesIcon, openGamesWindow);
   supportTouchAndDoubleClick(pictureFolderIcon, openPictureWindow);
   supportTouchAndDoubleClick(roleJourneyIcon, openRoleJourney);
-
+  supportTouchAndDoubleClick(fortuneIcon, openFortuneWindow);
   // 🧠 Make draggable
   makeDraggable(gamesIcon);
   makeDraggable(document.getElementById('icon1'));
@@ -609,6 +764,10 @@ supportTouchAndDoubleClick(newSiteIcon, () => {
   makeDraggable(document.getElementById('pictureWindow'));
   makeDraggable(roleJourneyIcon);
   makeDraggable(roleJourneyWindow);
+  makeDraggable(fortuneIcon);
+  makeDraggable(fortuneWindow);
+
+
 </script>
 </body>
 </html>
