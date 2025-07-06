@@ -355,7 +355,10 @@
   <img src="./images/magic_ball.png" alt="Fortune Teller">
   <div>Fortune Teller</div>
 </div>
-
+<div class="icon" id="cardIcon" style="top: 200px; left: 300px;">
+  <img src="./images/card.png" alt="Card Battle">
+  <div>Card Battle</div>
+</div>
 
    <div class="icon" id="gamesIcon" style="top: 120px; left: 20px;">
   <img id="gamesIconImg" src="./images/Folder Closed.png" alt="Games Folder">
@@ -532,6 +535,13 @@
   const gamesIcon = document.getElementById('gamesIcon');
   const gamesIconImg = document.getElementById('gamesIconImg');
   const gamesWindow = document.getElementById('gamesWindow');
+  const cardIcon = document.getElementById('cardIcon');
+
+
+makeDraggable(cardIcon);
+supportTouchAndDoubleClick(cardIcon, () => {
+  window.open('https://card-battle-topaz.vercel.app/');
+});
 
   function openGamesWindow() {
     gamesWindow.style.display = 'block';
