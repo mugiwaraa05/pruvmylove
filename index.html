@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=0.75, maximum-scale=0.75, user-scalable=yes">
 
   <meta charset="UTF-8">
   <title>Succinct Desktop</title>
@@ -360,6 +360,26 @@
   <div>Card Battle</div>
 </div>
 
+<div class="icon" id="zkCrushIcon" style="top: 100px; left: 200px;">
+  <img src="./images/lovee.png" alt="ZK Crush">
+  <div>ZK Crush</div>
+</div>
+
+<div class="icon" id="pixPfpGuessIcon" style="top: 200px; left: 400px;">
+  <img src="./images/question.png" alt="PixPFP Guess">
+  <div>PixPFP Guess</div>
+</div>
+
+<div class="icon" id="hallOfFameIcon" style="top: 300px; left: 100px;">
+  <img src="./images/fist.png" alt="Hall of Fame">
+  <div>Hall of Fame</div>
+</div>
+
+<div class="icon" id="appreciationBoardIcon" style="top: 400px; left: 400px;">
+  <img src="./images/clap.png" alt="Appreciation Board">
+  <div>Appreciation Board</div>
+</div>
+
    <div class="icon" id="gamesIcon" style="top: 120px; left: 20px;">
   <img id="gamesIconImg" src="./images/Folder Closed.png" alt="Games Folder">
   <div>Games</div>
@@ -379,7 +399,7 @@
       <img src="./images/game_2.png" alt="Game 2">
       <span>Succinct Crush</span>
     </div>
-    <div class="game-entry" onclick="window.open('https://succinct3d.netlify.app/succinct_shooterr.html')">
+    <div class="game-entry" onclick="window.open('https://cool-trifle-f94c30.netlify.app/succinct_shooterr.html')">
       <img src="./images/game_3.jpg" alt="Game 3">
       <span>Succinct 3D Shooter</span>
     </div>
@@ -570,6 +590,21 @@ supportTouchAndDoubleClick(cardIcon, () => {
   function openRoleJourney() {
     roleJourneyWindow.style.display = 'block';
   }
+  function openZkCrush() {
+  window.open('http://zkcrush.vercel.app/');
+}
+
+function openPixPfpGuess() {
+  window.open('https://pixpfp-guess.vercel.app/');
+}
+
+function openHallOfFame() {
+  window.open('https://halloffame-roan.vercel.app/');
+}
+
+function openAppreciationBoard() {
+  window.open('https://succinct-board.vercel.app/');
+}
 
   function updateClock() {
     const clock = document.getElementById('xpClock');
@@ -776,7 +811,15 @@ function closeMosaicWindow() {
   makeDraggable(roleJourneyWindow);
   makeDraggable(fortuneIcon);
   makeDraggable(fortuneWindow);
+  makeDraggable(document.getElementById('zkCrushIcon'));
+makeDraggable(document.getElementById('pixPfpGuessIcon'));
+makeDraggable(document.getElementById('hallOfFameIcon'));
+makeDraggable(document.getElementById('appreciationBoardIcon'));
 
+supportTouchAndDoubleClick(document.getElementById('zkCrushIcon'), openZkCrush);
+supportTouchAndDoubleClick(document.getElementById('pixPfpGuessIcon'), openPixPfpGuess);
+supportTouchAndDoubleClick(document.getElementById('hallOfFameIcon'), openHallOfFame);
+supportTouchAndDoubleClick(document.getElementById('appreciationBoardIcon'), openAppreciationBoard);
 
 </script>
 </body>
